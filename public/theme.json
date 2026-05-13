@@ -1,0 +1,13 @@
+{
+  "custom_fonts": ["Inter", "Roboto"],
+  "variables": {
+    "light": {
+      "--primary": "210 100% 20%",
+      "--background": "210 20% 98%"
+    },
+    "dark": {
+      "--primary": "210 100% 20%",
+      "--background": "222 47% 11%"
+    }
+  }
+}
