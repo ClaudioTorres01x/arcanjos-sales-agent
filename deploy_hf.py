@@ -69,5 +69,14 @@ if verify_token:
     except Exception as e:
         pass
 
+for key in ("TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_WHATSAPP_FROM"):
+    value = os.environ.get(key)
+    if value:
+        print(f"Adicionando {key} nos Secrets...")
+        try:
+            api.add_space_secret(repo_id=repo_id, key=key, value=value)
+        except Exception as e:
+            pass
+
 print(f"Deploy concluido e arquivos enviados!")
 print(f"Acesse sua aplicacao em: https://huggingface.co/spaces/{repo_id}")
