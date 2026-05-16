@@ -1,7 +1,7 @@
 import os
 import requests
 from fastapi import FastAPI, Request, Response, BackgroundTasks
-from chainlit.utils import mount_chainlit
+
 from dotenv import load_dotenv
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -315,6 +315,3 @@ def debug(phone: str = "5500000000000", msg: str = "Ola"):
 
     return result
 
-
-# Interface Web Chainlit montada na raiz
-mount_chainlit(app=app, target="app.py", path="/")
