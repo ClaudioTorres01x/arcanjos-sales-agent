@@ -18,6 +18,7 @@ load_dotenv()
 
 DISCONTINUED = [
     ("telemedicina familiar", "120"),
+    ("familiar", "40 anos"),
 ]
 
 def format_docs(docs):
