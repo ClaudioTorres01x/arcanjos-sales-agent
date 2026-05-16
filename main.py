@@ -96,10 +96,6 @@ async def handle_twilio_message(request: Request, background_tasks: BackgroundTa
     from_number = form.get("From", "").replace("whatsapp:", "")
     message_sid = form.get("MessageSid", "")
 
-    import json as _json
-    with open("webhook_log.txt", "a", encoding="utf-8") as f:
-        f.write(_json.dumps({"canal": "twilio", "de": from_number, "texto": body_text, "sid": message_sid}, ensure_ascii=False) + "\n")
-
     print(f"[TWILIO MSG] De: {from_number} | Texto: {body_text}")
 
     if not body_text or not from_number:
