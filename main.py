@@ -19,9 +19,6 @@ WHATSAPP_PHONE_NUMBER_ID = os.environ.get("WHATSAPP_PHONE_NUMBER_ID")
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN", "arcanjos_zap")
 GRAPH_API_URL = f"https://graph.facebook.com/v20.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
 
-ZAPI_BASE_URL = os.environ.get("ZAPI_BASE_URL", "")
-ZAPI_CLIENT_TOKEN = os.environ.get("ZAPI_CLIENT_TOKEN", "")
-
 TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
 TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
 TWILIO_WHATSAPP_FROM = os.environ.get("TWILIO_WHATSAPP_FROM", "whatsapp:+14155238886")
@@ -97,16 +94,6 @@ def send_twilio_message(to_number: str, text: str):
         print(f"[TWILIO OK] Mensagem enviada para {to_number}")
     return resp
 
-
-def send_zapi_message(phone_number: str, text: str):
-    url = f"{ZAPI_BASE_URL}/send-text"
-    headers = {"Client-Token": ZAPI_CLIENT_TOKEN}
-    resp = requests.post(url, headers=headers, json={"phone": phone_number, "message": text}, timeout=30)
-    if not resp.ok:
-        print(f"[ZAPI ERRO] {resp.status_code}: {resp.text}")
-    else:
-        print(f"[ZAPI OK] Mensagem enviada para {phone_number}")
-    return resp
 
 
 def send_whatsapp_message(phone_number: str, text: str):
@@ -224,56 +211,6 @@ def process_and_reply_twilio(phone_number: str, text: str):
     except Exception as e:
         print(f"[TWILIO ERRO] Processamento de {phone_number}: {e}")
 
-
-@app.post("/zapi")
-async def handle_zapi_message(request: Request, background_tasks: BackgroundTasks):
-    """Recebe mensagens do WhatsApp via Z-API."""
-    body = await request.json()
-
-    import json as _json
-    print(f"[ZAPI] Webhook recebido: {_json.dumps(body, ensure_ascii=False)[:300]}")
-
-    try:
-        # Ignorar mensagens enviadas pelo próprio bot e não-texto
-        if body.get("fromMe"):
-            return {"status": "ok"}
-
-        msg_type = body.get("type", "")
-        if msg_type not in ("ReceivedCallback",):
-            return {"status": "ok"}
-
-        text = body.get("text", {}).get("message", "").strip()
-        if not text:
-            return {"status": "ok"}
-
-        phone_number = body.get("phone", "")
-        message_id = body.get("messageId", "")
-
-        if message_id in processed_message_ids:
-            return {"status": "ok"}
-        processed_message_ids.add(message_id)
-
-        print(f"[ZAPI MSG] De: {phone_number} | Texto: {text}")
-        background_tasks.add_task(process_and_reply_zapi, phone_number, text)
-
-    except Exception as e:
-        print(f"[ZAPI ERRO] Parsing: {e}")
-
-    return {"status": "ok"}
-
-
-def process_and_reply_zapi(phone_number: str, text: str):
-    try:
-        chat_history = memory_store.setdefault(phone_number, [])
-        response = whatsapp_chain.invoke({"question": text, "chat_history": chat_history})
-        bot_text = response.content
-
-        chat_history.append(HumanMessage(content=text))
-        chat_history.append(AIMessage(content=bot_text))
-
-        send_zapi_message(phone_number, bot_text)
-    except Exception as e:
-        print(f"[ZAPI ERRO] Processamento de {phone_number}: {e}")
 
 
 @app.get("/debug")
