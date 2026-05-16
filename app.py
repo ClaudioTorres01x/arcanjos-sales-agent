@@ -16,8 +16,18 @@ from prompts import SYSTEM_PROMPT
 load_dotenv()
 
 
+DISCONTINUED = [
+    ("telemedicina familiar", "120"),
+]
+
 def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+    filtered = []
+    for doc in docs:
+        content_lower = doc.page_content.lower()
+        if any(kw1 in content_lower and kw2 in content_lower for kw1, kw2 in DISCONTINUED):
+            continue
+        filtered.append(doc.page_content)
+    return "\n\n".join(filtered)
 
 
 @cl.on_chat_start
