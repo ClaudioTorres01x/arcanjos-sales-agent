@@ -43,7 +43,6 @@ llm = ChatOpenAI(model="gpt-4o", temperature=0.3)
 
 DISCONTINUED = [
     ("telemedicina familiar", "120"),
-    ("familiar", "40 anos"),
 ]
 
 def format_docs(docs):
