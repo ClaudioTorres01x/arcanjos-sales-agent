@@ -45,30 +45,6 @@ if openai_key:
     except Exception as e:
         print(f"Aviso: {e}")
 
-whatsapp_token = os.environ.get("WHATSAPP_TOKEN")
-if whatsapp_token:
-    print("Adicionando WHATSAPP_TOKEN nos Secrets...")
-    try:
-        api.add_space_secret(repo_id=repo_id, key="WHATSAPP_TOKEN", value=whatsapp_token)
-    except Exception as e:
-        pass
-
-phone_id = os.environ.get("WHATSAPP_PHONE_NUMBER_ID")
-if phone_id:
-    print("Adicionando WHATSAPP_PHONE_NUMBER_ID nos Secrets...")
-    try:
-        api.add_space_secret(repo_id=repo_id, key="WHATSAPP_PHONE_NUMBER_ID", value=phone_id)
-    except Exception as e:
-        pass
-
-verify_token = os.environ.get("VERIFY_TOKEN")
-if verify_token:
-    print("Adicionando VERIFY_TOKEN nos Secrets...")
-    try:
-        api.add_space_secret(repo_id=repo_id, key="VERIFY_TOKEN", value=verify_token)
-    except Exception as e:
-        pass
-
 for key in ("TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN", "TWILIO_WHATSAPP_FROM"):
     value = os.environ.get(key)
     if value:
